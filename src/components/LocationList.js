@@ -4,17 +4,19 @@ import WeatherLocation from './WeatherLocation';
 import './styles.css';
 
 const LocationList = ({ cities, onSelectedLocation }) => { 
-    const handleWeatherLocationClick = city => {
+    const handleWeatherLocationClick = payload => {
+        const { name } = payload;
         // console.log("handleWeatherLocationClick");
-        onSelectedLocation(city);
+        onSelectedLocation(name);
     };
     const strTocomponents = cities => (
-        cities.map((city, index) => 
+        cities.map(city => 
             (
                 <WeatherLocation 
-                    city={city} 
-                    key={index}
+                    key={city.key}
+                    city={city.name} 
                     onWeatherLocationClick={() => handleWeatherLocationClick(city) } 
+                    data={ city.data }
                 />)
             )
     );

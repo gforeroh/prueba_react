@@ -1,19 +1,29 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+// import { bindActionCreators } from "redux";
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { setSelectedCity, setWeather } from './../actions';
+import { getWeatherCities, getCity } from './../reducers';
 import LocationList from './../components/LocationList';
-import { setSelectedCity} from './../actions';
 
 
 class LocationListContainer extends Component {
-    handleSelectedLocation = city => {
-        this.props.setCity(city);
+
+    componentDidMount() {
+        const { setWeather, setSelectedCity, cities, city } = this.props;
+
+        setWeather(cities);
+        setSelectedCity(city);
+    }
+
+    handleSelectedLocation = city => {        
+        this.props.setSelectedCity(city);
     };
 
     render() {
         return (
             <LocationList
-                cities={this.props.cities}
+                cities={this.props.citiesWeather}
                 onSelectedLocation={this.handleSelectedLocation}
             />
         );
@@ -21,18 +31,24 @@ class LocationListContainer extends Component {
 }
 
 LocationListContainer.propTypes = {
-
-};
-
-LocationListContainer.propTypes = {
-    setCity: PropTypes.func.isRequired,
+    setSelectedCity: PropTypes.func.isRequired,
+    setWeather: PropTypes.func.isRequired,
     cities: PropTypes.array.isRequired,
+    citiesWeather : PropTypes.array,
+    city: PropTypes.string.isRequired,
 };
 
-const mapDispatchToPropsAction = dispatch => ({
-    setCity: value => dispatch(setSelectedCity(value))
+// const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
+const mapDispatchToProps = dispatch => ({
+    setSelectedCity: value => dispatch(setSelectedCity(value)),
+    setWeather: cities => dispatch(setWeather(cities))
 });
 
-export default connect(null, mapDispatchToPropsAction)(LocationListContainer);
+const mapStateToProps = state => ({ 
+    citiesWeather: getWeatherCities(state),
+    city: getCity(state)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(LocationListContainer);
 
 // export default LocationListContainer;
